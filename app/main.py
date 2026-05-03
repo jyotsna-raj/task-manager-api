@@ -1,14 +1,20 @@
 from fastapi import FastAPI
-from app.database.db import engine, Base
-from app.models import task_model
+from fastapi.middleware.cors import CORSMiddleware
 from app.api import task_routes
 
 app = FastAPI()
 
-Base.metadata.create_all(bind=engine)
+# 🔥 CORS FIX
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(task_routes.router)
 
-@app.get("/")
-def home():
-    return {"message": "Task Manager API Running"}
+@app.get("/health")
+def health():
+    return {"status": "Task Service Running"}
